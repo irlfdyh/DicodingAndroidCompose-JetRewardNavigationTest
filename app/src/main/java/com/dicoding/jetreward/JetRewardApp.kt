@@ -1,6 +1,5 @@
 package com.dicoding.jetreward
 
-import android.telecom.Call.Details
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -37,10 +36,16 @@ fun JetRewardApp(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
     Scaffold(
         modifier = modifier,
         bottomBar = {
-            BottomBar(navController = navController)
+            if (currentRoute != Screen.DetailReward.route) {
+                BottomBar(navController = navController)
+            }
         }
     ) { innerPadding ->
         NavHost(
@@ -72,7 +77,14 @@ fun JetRewardApp(
                         navController.navigateUp()
                     },
                     navigateToCart = {
-
+                        navController.popBackStack()
+                        navController.navigate(Screen.Cart.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 )
             }
